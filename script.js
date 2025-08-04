@@ -13,7 +13,7 @@ const title = document.querySelector("h1");
 const statusText = document.querySelector("h3");
 
 const getRandomColor = () => {
-  const index = Math.floor(Math.random() * 4);
+  const index = Math.floor(Math.random() * colors.length);
   return colors[index];
 };
 
@@ -27,12 +27,11 @@ const flashButton = (button) => {
 const nextLevel = () => {
   currentLevel++;
   statusText.innerText = `Level ${currentLevel}`;
-
-  if (currentLevel * 10 > highestScoreCount) {
-    highestScoreCount = currentLevel * 10;
+  const score = currentLevel * 10;
+  if (score > highestScoreCount) {
+    highestScoreCount = score;
     highestScore.innerText = `Your Highest Score is : ${highestScoreCount}`;
   }
-
   const randomColor = getRandomColor();
   const button = document.querySelector(`.${randomColor}`);
   computerSequence.push(randomColor);
@@ -40,43 +39,45 @@ const nextLevel = () => {
 };
 
 const startGame = () => {
-  if (!gameStarted) {
-    gameStarted = true;
-    currentLevel = 0;
-    computerSequence = [];
-    userSequence = [];
-    title.innerText = "Game Started!";
-    nextLevel();
-  }
+  gameStarted = true;
+  currentLevel = 0;
+  computerSequence = [];
+  userSequence = [];
+  title.innerText = "Game Started!";
+  nextLevel();
 };
 
 const validateInput = () => {
   const currentIndex = userSequence.length - 1;
-
   if (userSequence[currentIndex] === computerSequence[currentIndex]) {
     if (userSequence.length === computerSequence.length) {
       setTimeout(() => {
         userSequence = [];
         nextLevel();
-      }, 300);
+      }, 500);
     }
   } else {
     body.classList.add("fail");
     setTimeout(() => {
       body.classList.remove("fail");
     }, 300);
-    statusText.innerText = `You Lost the Game. Your current score is ${
+    statusText.innerText = `You Lost the Game. Your score was ${
       currentLevel * 10
     }`;
-    title.innerText = "Press any key to restart";
-    computerSequence = [];
-    userSequence = [];
-    currentLevel = 0;
-    gameStarted = false;
+    title.innerText = "Press any key or tap to restart.";
+    resetGame();
   }
 };
 
+const resetGame = () => {
+  gameStarted = false;
+  currentLevel = 0;
+  computerSequence = [];
+  userSequence = [];
+};
+
 const handleUserClick = (event) => {
+  if (!gameStarted) return;
   const button = event.currentTarget;
   const color = button.getAttribute("id");
   userSequence.push(color);
@@ -84,9 +85,24 @@ const handleUserClick = (event) => {
   validateInput();
 };
 
-document.addEventListener("keypress", () => {
-  startGame();
+const initializeGame = () => {
+  if (!gameStarted) {
+    startGame();
+  }
+};
+
+const setupInputListeners = () => {
   colorButtons.forEach((button) => {
     button.addEventListener("click", handleUserClick);
   });
-});
+
+  if (screen.width <= 768) {
+    document.addEventListener("touchstart", initializeGame, { once: true });
+    statusText.innerText = "Tap anywhere to start the game.";
+  } else {
+    document.addEventListener("keydown", initializeGame, { once: true });
+    statusText.innerText = "Press any key to start the game.";
+  }
+};
+
+setupInputListeners();
