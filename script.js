@@ -91,18 +91,20 @@ const initializeGame = () => {
   }
 };
 
-const setupInputListeners = () => {
-  colorButtons.forEach((button) => {
-    button.addEventListener("click", handleUserClick);
-  });
+colorButtons.forEach((button) => {
+  button.addEventListener("click", handleUserClick);
+});
 
-  if (screen.width <= 768) {
-    document.addEventListener("touchstart", initializeGame, { once: true });
+document.addEventListener("touchstart", () => {
+  if (screen.width <= 768 || gameStarted == false) {
     statusText.innerText = "Tap anywhere to start the game.";
-  } else {
-    document.addEventListener("keydown", initializeGame, { once: true });
-    statusText.innerText = "Press any key to start the game.";
+    initializeGame();
   }
-};
+});
 
-setupInputListeners();
+document.addEventListener("keydown", () => {
+  if (screen.width >= 768 || gameStarted == false) {
+    statusText.innerText = "Press any key to start the game.";
+    initializeGame();
+  }
+});
