@@ -2,7 +2,7 @@
 
 A simple and fun memory-based browser game inspired by the classic Simon Says game. Built using HTML, CSS, and JavaScript with a responsive layout and modern design.
 
-🔗 Play Now - [Link](https://simonsaysgame-aman.netlify.app/)
+🔗 Play Now - [Link](https://buildsbyaman-simonsaysgame.vercel.app/)
 
 📦 Features
 
